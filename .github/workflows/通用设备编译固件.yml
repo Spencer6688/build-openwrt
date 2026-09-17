@@ -119,11 +119,19 @@ jobs:
 
       - name: Download package
         id: package
+        shell: bash
         run: |
+          set -euo pipefail
           cd openwrt/
+
           make defconfig
+
+          echo "Selected OpenWrt target:"
+          grep -E '^CONFIG_TARGET|^CONFIG_TARGET_BOARD|^CONFIG_TARGET_SUBTARGET|^CONFIG_TARGET_PROFILE' .config || true
+
           make download -j8
-          find dl -size -1024c -exec ls -l {} \;
+
+          find dl -size -1024c -exec ls -l {} \; || true
           find dl -size -1024c -exec rm -f {} \;
 
       - name: Compile the OpenWrt
